@@ -1,96 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Wedding Sage Green Theme */
+    --background: 60 20% 97%;
+    --foreground: 0 0% 10%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 60 20% 98%;
+    --card-foreground: 0 0% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 60 20% 98%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Sage Green Primary */
+    --primary: 78 25% 48%;
+    --primary-foreground: 60 20% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Warm cream secondary */
+    --secondary: 45 30% 94%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 45 20% 92%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 78 20% 85%;
+    --accent-foreground: 78 30% 25%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 60 20% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 45 20% 88%;
+    --input: 45 20% 88%;
+    --ring: 78 25% 48%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom Wedding Colors */
+    --sage: 78 25% 48%;
+    --sage-light: 78 20% 85%;
+    --sage-dark: 78 30% 35%;
+    --olive: 78 35% 38%;
+    --cream: 45 40% 95%;
+    --gold: 43 74% 49%;
+    --charcoal: 0 0% 15%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Typography */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Montserrat', sans-serif;
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.08);
+    --shadow-elegant: 0 10px 40px -10px hsl(78 25% 48% / 0.2);
+    --shadow-card: 0 2px 30px -5px hsl(0 0% 0% / 0.06);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 0 0% 8%;
+    --foreground: 60 20% 95%;
+    --card: 0 0% 10%;
+    --card-foreground: 60 20% 95%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 60 20% 95%;
+    --primary: 78 25% 55%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 60 20% 95%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 60 10% 70%;
+    --accent: 78 20% 25%;
+    --accent-foreground: 78 20% 85%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 78 25% 55%;
   }
 }
 
@@ -99,7 +84,192 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer components {
+  /* Elegant button variants */
+  .btn-wedding {
+    @apply relative overflow-hidden px-8 py-4 font-medium tracking-widest uppercase text-sm;
+    @apply bg-primary text-primary-foreground;
+    @apply transition-all duration-500 ease-out;
+    @apply hover:shadow-elegant hover:scale-[1.02];
+  }
+
+  .btn-wedding-outline {
+    @apply relative overflow-hidden px-8 py-4 font-medium tracking-widest uppercase text-sm;
+    @apply border-2 border-primary text-primary bg-transparent;
+    @apply transition-all duration-500 ease-out;
+    @apply hover:bg-primary hover:text-primary-foreground;
+  }
+
+  /* Section styling */
+  .section-padding {
+    @apply px-6 py-20 md:px-12 md:py-32 lg:px-24;
+  }
+
+  .section-title {
+    @apply font-heading text-4xl md:text-5xl lg:text-6xl font-medium text-charcoal tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply font-body text-sm md:text-base tracking-[0.3em] uppercase text-muted-foreground;
+  }
+
+  /* Decorative elements */
+  .divider-ornament {
+    @apply w-24 h-px bg-gradient-to-r from-transparent via-primary to-transparent mx-auto;
+  }
+
+  /* Masonry gallery hover effect */
+  .gallery-item {
+    @apply relative overflow-hidden cursor-pointer;
+    @apply transition-all duration-700 ease-out;
+  }
+
+  .gallery-item:hover {
+    @apply z-10;
+  }
+
+  .gallery-item:hover img {
+    @apply scale-110;
+  }
+
+  .gallery-item:not(:hover) {
+    @apply opacity-60;
+  }
+
+  .gallery-container:hover .gallery-item:not(:hover) {
+    @apply blur-[2px] opacity-60;
+  }
+
+  .gallery-container:hover .gallery-item:hover {
+    @apply blur-0 opacity-100;
+  }
+
+  /* Timeline styles */
+  .timeline-line {
+    @apply absolute left-1/2 transform -translate-x-1/2 w-px h-full;
+    background: linear-gradient(to bottom, transparent, hsl(var(--primary)), transparent);
+  }
+
+  .timeline-dot {
+    @apply w-4 h-4 rounded-full bg-primary border-4 border-background shadow-elegant;
+  }
+
+  /* Card elegant */
+  .card-elegant {
+    @apply bg-card rounded-lg p-8 shadow-card;
+    @apply border border-border/50;
+    @apply transition-all duration-500;
+    @apply hover:shadow-elegant hover:-translate-y-1;
+  }
+
+  /* Video overlay */
+  .video-overlay {
+    @apply absolute inset-0;
+    background: linear-gradient(
+      to bottom,
+      hsl(0 0% 0% / 0.3) 0%,
+      hsl(0 0% 0% / 0.5) 50%,
+      hsl(0 0% 0% / 0.7) 100%
+    );
+  }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    @apply animate-bounce;
+  }
+
+  /* Text reveal animation */
+  .text-reveal {
+    @apply overflow-hidden;
+  }
+
+  /* Floating element */
+  .floating {
+    animation: floating 6s ease-in-out infinite;
+  }
+
+  @keyframes floating {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* Elegant underline animation */
+  .link-underline {
+    @apply relative;
+  }
+
+  .link-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-px bg-primary;
+    @apply origin-left scale-x-0 transition-transform duration-500;
+  }
+
+  .link-underline:hover::after {
+    @apply scale-x-100;
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .text-charcoal {
+    color: hsl(var(--charcoal));
+  }
+
+  .bg-sage {
+    background-color: hsl(var(--sage));
+  }
+
+  .bg-sage-light {
+    background-color: hsl(var(--sage-light));
+  }
+
+  .bg-cream {
+    background-color: hsl(var(--cream));
+  }
+
+  .text-sage {
+    color: hsl(var(--sage));
+  }
+
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+
+  .border-sage {
+    border-color: hsl(var(--sage));
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--sage)) 0%, hsl(var(--olive)) 100%);
+  }
+
+  /* Noise texture overlay */
+  .noise-overlay::before {
+    content: '';
+    @apply absolute inset-0 opacity-[0.03] pointer-events-none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 }
