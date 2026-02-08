@@ -1,25 +1,32 @@
-import { motion } from 'framer-motion';
-import { Church, UtensilsCrossed, MapPin, Clock, AlertCircle } from 'lucide-react';
+import { motion } from "framer-motion";
+import {
+  Church,
+  UtensilsCrossed,
+  MapPin,
+  Clock,
+  ExternalLink,
+} from "lucide-react";
+import { FloralDecoration } from "./FloralDecoration";
 
 const DetailsSection = () => {
   const events = [
     {
       icon: Church,
-      title: 'Cerimónia Civil',
-      time: '16:30h',
-      venue: 'Quinta do Terrim',
-      location: 'Pinhal Novo',
-      mapUrl: 'https://maps.google.com/?q=Quinta+do+Terrim+Pinhal+Novo',
-      description: 'Uma cerimónia íntima rodeada de natureza',
+      title: "Cerimónia Civil",
+      time: "16:30h",
+      venue: "Quinta do Terrim",
+      location: "Pinhal Novo",
+      mapUrl: "https://maps.google.com/?q=Quinta+do+Terrim+Pinhal+Novo",
+      description: "Uma cerimónia íntima rodeada de natureza",
     },
     {
       icon: UtensilsCrossed,
-      title: 'Copo-d\'Água',
-      time: '20:00h',
-      venue: 'Salão Maldini Eventos',
-      location: 'Montijo',
-      mapUrl: 'https://maps.google.com/?q=Salao+Maldini+Eventos+Montijo',
-      description: 'Celebração com jantar, música e dança',
+      title: "Copo-d'Água",
+      time: "20:00h",
+      venue: "Salão Maldini Eventos",
+      location: "Montijo",
+      mapUrl: "https://maps.google.com/?q=Salao+Maldini+Eventos+Montijo",
+      description: "Celebração com jantar, música e dança",
     },
   ];
 
@@ -31,28 +38,40 @@ const DetailsSection = () => {
       transition: {
         delay: i * 0.2,
         duration: 0.8,
-        ease: "easeOut" as const,
+        ease: "easeOut",
       },
     }),
   };
 
   return (
-    <section className="relative section-padding bg-background overflow-hidden">
-      {/* Decorative circles */}
-      <div className="absolute top-20 right-10 w-64 h-64 border border-primary/10 rounded-full" />
-      <div className="absolute bottom-20 left-10 w-48 h-48 border border-primary/10 rounded-full" />
+    <section className="relative py-24 md:py-32 bg-background overflow-hidden">
+      {/* Decorative Elements */}
+      <FloralDecoration
+        variant="top-right"
+        flowerNumber={3}
+        className="opacity-80"
+      />
+      <FloralDecoration
+        variant="bottom-left"
+        flowerNumber={4}
+        className="opacity-80"
+      />
 
-      <div className="relative max-w-5xl mx-auto">
+      <div className="relative max-w-5xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1 }}
           className="text-center mb-16"
         >
-          <p className="section-subtitle mb-4">O Grande Dia</p>
-          <h2 className="section-title mb-4">Detalhes do Evento</h2>
-          <div className="divider-ornament" />
+          <p className="font-body text-sm md:text-base tracking-[0.2em] text-primary uppercase mb-4">
+            O Grande Dia
+          </p>
+          <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl text-charcoal mb-6">
+            Detalhes do Evento
+          </h2>
+          <div className="w-24 h-1 bg-primary/20 mx-auto rounded-full" />
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
@@ -64,73 +83,57 @@ const DetailsSection = () => {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
-              className="card-elegant group relative overflow-hidden"
+              className="relative group h-full"
             >
-              {/* Decorative gradient */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-md rounded-3xl shadow-soft transform transition-transform duration-500 group-hover:scale-[1.02] group-hover:shadow-elegant border border-white/50" />
 
-              <div className="text-center">
+              <div className="relative p-8 md:p-12 text-center h-full flex flex-col items-center">
                 {/* Icon */}
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-sage-light mb-6 group-hover:scale-110 transition-transform duration-500">
-                  <event.icon className="w-7 h-7 text-sage-dark" />
+                <div className="w-20 h-20 rounded-full bg-sage/10 flex items-center justify-center mb-8 group-hover:bg-primary transition-colors duration-500">
+                  <event.icon className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-500" />
                 </div>
 
                 {/* Title */}
-                <h3 className="font-heading text-2xl md:text-3xl text-charcoal mb-4">
+                <h3 className="font-heading text-3xl text-charcoal mb-6">
                   {event.title}
                 </h3>
 
                 {/* Time */}
-                <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-8 bg-primary/5 px-6 py-2 rounded-full border border-primary/10">
                   <Clock className="w-4 h-4 text-primary" />
-                  <span className="font-heading text-3xl text-primary font-medium">
+                  <span className="font-heading text-2xl text-primary">
                     {event.time}
                   </span>
                 </div>
 
                 {/* Venue */}
-                <div className="space-y-1 mb-6">
-                  <p className="font-body text-lg font-medium text-charcoal">
+                <div className="mb-8 flex-grow">
+                  <p className="font-body text-xl font-medium text-charcoal mb-2">
                     {event.venue}
                   </p>
-                  <p className="font-body text-muted-foreground">
+                  <p className="font-body text-muted-foreground flex items-center justify-center gap-2">
+                    <MapPin className="w-4 h-4" />
                     {event.location}
+                  </p>
+                  <p className="font-body text-sm text-muted-foreground/80 mt-4 italic">
+                    {event.description}
                   </p>
                 </div>
 
-                {/* Description */}
-                <p className="font-body text-sm text-muted-foreground mb-6 italic">
-                  {event.description}
-                </p>
-
-                {/* Map Button */}
+                {/* Button */}
                 <a
                   href={event.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 border border-primary/30 rounded-full text-sm font-medium text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                  className="inline-flex items-center gap-2 text-primary font-medium border-b border-primary/30 hover:border-primary transition-colors pb-1 group/btn"
                 >
-                  <MapPin className="w-4 h-4" />
                   Ver no Mapa
+                  <ExternalLink className="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" />
                 </a>
               </div>
             </motion.div>
           ))}
         </div>
-
-        {/* Important Notice */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-12 flex items-center justify-center gap-3 p-4 bg-accent/50 rounded-lg border border-primary/20"
-        >
-          <AlertCircle className="w-5 h-5 text-primary flex-shrink-0" />
-          <p className="font-body text-sm text-charcoal">
-            <strong>Nota importante:</strong> A cerimónia e o copo-d'água serão em locais diferentes.
-          </p>
-        </motion.div>
       </div>
     </section>
   );
