@@ -1,7 +1,43 @@
 #!/bin/bash
 
-# Script de Operações para o Backend (Produção/Docker)
-# Use este script para acessar o terminal do container backend ou ver logs.
+# Script de Operações para o Backend
+# Suporta execução no Host (via Docker) ou dentro do Container (Coolify Terminal)
+
+# Verifica se está rodando dentro do container (verificando .dockerenv ou cgroups)
+IS_INSIDE_CONTAINER=0
+if [ -f /.dockerenv ] || grep -q "docker" /proc/1/cgroup 2>/dev/null; then
+    IS_INSIDE_CONTAINER=1
+fi
+
+COMMAND=$1
+
+# --- EXECUÇÃO DENTRO DO CONTAINER ---
+if [ "$IS_INSIDE_CONTAINER" -eq 1 ]; then
+    echo "🐳 Detectado ambiente Docker (Container)."
+    
+    case $COMMAND in
+        "migrate")
+            echo "🔄 Rodando migrações do banco de dados..."
+            npx prisma migrate deploy
+            ;;
+        "seed")
+            echo "🌱 Rodando seed do banco de dados..."
+            npx prisma db seed
+            ;;
+        "shell")
+            echo "⚠️  Você já está no terminal do container."
+            ;;
+        "logs")
+            echo "⚠️  Para ver logs dentro do container, verifique a saída padrão da aplicação (stdout)."
+            ;;
+        *)
+            echo "Uso (dentro do container): ./ops.sh [migrate|seed]"
+            ;;
+    esac
+    exit 0
+fi
+
+# --- EXECUÇÃO NO HOST (FORA DO CONTAINER) ---
 
 # Função para encontrar o ID do container
 get_container_id() {
@@ -16,9 +52,9 @@ get_container_id() {
     echo "$id"
 }
 
-# Verifica se o docker está disponível
+# Verifica se o docker está disponível no host
 if ! command -v docker &> /dev/null; then
-    echo "❌ Erro: Comando 'docker' não encontrado."
+    echo "❌ Erro: Comando 'docker' não encontrado e não estamos dentro de um container."
     exit 1
 fi
 
@@ -31,9 +67,7 @@ if [ -z "$CONTAINER_ID" ]; then
     exit 1
 fi
 
-echo "✅ Container encontrado: $CONTAINER_ID"
-
-COMMAND=$1
+echo "✅ Container encontrado (Host Mode): $CONTAINER_ID"
 
 case $COMMAND in
     "logs")

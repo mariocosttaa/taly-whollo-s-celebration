@@ -53,8 +53,8 @@ const GiftSection = () => {
               dois, podem fazê-lo através de:
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 bg-sage/10 p-6 rounded-xl border border-sage/20">
-              <code className="font-mono text-sm sm:text-lg text-charcoal bg-white px-4 py-3 rounded border border-sage/10 tracking-wider break-all">
+            <div className="flex flex-col items-center justify-center gap-4 bg-sage/10 p-6 rounded-xl border border-sage/20 w-full max-w-full overflow-hidden">
+              <code className="font-mono text-sm sm:text-lg text-charcoal bg-white px-4 py-3 rounded border border-sage/10 tracking-wider break-all w-full text-center whitespace-pre-wrap">
                 {IBAN}
               </code>
               <button
