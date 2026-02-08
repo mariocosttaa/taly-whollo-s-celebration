@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - JWT_SECRET=super-secret-key-change-in-production
+      # Add other env vars from backend/.env here
+    volumes:
+      # Persist the SQLite database file
+      - ./backend/prisma/dev.db:/app/prisma/dev.db
+    restart: always
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Build time argument for Vite
+        # Point to /api which Nginx will proxy to backend
+        - VITE_API_URL=/api
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
