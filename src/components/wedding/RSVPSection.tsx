@@ -78,6 +78,16 @@ const RSVPSection = () => {
       id="rsvp"
       className="relative py-24 md:py-32 bg-stone-50 overflow-hidden"
     >
+      <FloralDecoration
+        variant="top-right"
+        flowerNumber={2}
+        className="opacity-40"
+      />
+      <FloralDecoration
+        variant="bottom-left"
+        flowerNumber={3}
+        className="opacity-40"
+      />
       <div className="relative max-w-2xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

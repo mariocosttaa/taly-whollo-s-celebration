@@ -73,7 +73,11 @@ const CountdownSection = () => {
       className="relative py-24 md:py-32 bg-background overflow-hidden"
     >
       {/* Decorative Background */}
-      <FloralDecoration variant="top-left" flowerNumber={1} />
+      <FloralDecoration 
+        variant="top-left" 
+        flowerNumber={1} 
+        className="translate-x-0 translate-y-0 opacity-80"
+      />
 
       <div className="relative max-w-5xl mx-auto px-6 text-center z-10">
         <motion.div

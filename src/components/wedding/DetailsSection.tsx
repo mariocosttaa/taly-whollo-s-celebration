@@ -49,12 +49,12 @@ const DetailsSection = () => {
       <FloralDecoration
         variant="top-right"
         flowerNumber={3}
-        className="opacity-80"
+        className="opacity-80 translate-x-0 translate-y-0"
       />
       <FloralDecoration
         variant="bottom-left"
         flowerNumber={1}
-        className="opacity-80"
+        className="opacity-80 translate-x-0 translate-y-0"
       />
 
       <div className="relative max-w-5xl mx-auto px-6">

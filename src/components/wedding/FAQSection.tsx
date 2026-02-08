@@ -33,7 +33,11 @@ const FAQSection = () => {
   return (
     <section className="relative pt-24 md:pt-32 pb-48 md:pb-80 bg-background overflow-hidden">
       {/* Decorative Background */}
-      <FloralDecoration variant="bottom-left" flowerNumber={1} />
+      <FloralDecoration 
+        variant="bottom-left" 
+        flowerNumber={1} 
+        className="translate-x-0 translate-y-0"
+      />
       <FloralDecoration
         variant="top-right"
         flowerNumber={2}
