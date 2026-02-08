@@ -53,7 +53,7 @@ const DetailsSection = () => {
       />
       <FloralDecoration
         variant="bottom-left"
-        flowerNumber={4}
+        flowerNumber={1}
         className="opacity-80"
       />
 

@@ -37,8 +37,8 @@ const TimelineSection = () => {
   return (
     <section className="relative py-24 md:py-32 bg-background overflow-hidden">
        {/* Decorative Background */}
-       <FloralDecoration variant="side-left" flowerNumber={5} className="opacity-50" />
-       <FloralDecoration variant="side-right" flowerNumber={6} className="opacity-30 top-3/4" />
+       <FloralDecoration variant="side-left" flowerNumber={2} className="opacity-50" />
+       <FloralDecoration variant="side-right" flowerNumber={3} className="opacity-30 top-3/4" />
        
       <div className="relative max-w-4xl mx-auto px-6">
         <motion.div

@@ -10,7 +10,7 @@ interface FloralDecorationProps {
     | "center"
     | "side-left"
     | "side-right";
-  flowerNumber?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  flowerNumber?: 1 | 2 | 3;
 }
 
 const positionClasses = {

@@ -24,7 +24,7 @@ const GiftSection = () => {
     >
       <FloralDecoration
         variant="side-right"
-        flowerNumber={7}
+        flowerNumber={2}
         className="opacity-60 -right-10"
       />
 
