@@ -5,7 +5,7 @@ import { FloralDecoration } from "./FloralDecoration";
 
 const GiftSection = () => {
   const [copied, setCopied] = useState(false);
-  const IBAN = "PT50000700000000000000000";
+  const IBAN = "PT50000700000084373713823";
 
   const handleCopyIBAN = async () => {
     try {
