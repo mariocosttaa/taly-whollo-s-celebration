@@ -6,7 +6,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3001:3000"
+      - "3005:3000"
     environment:
       - DATABASE_URL=file:./dev.db
       - JWT_SECRET=super-secret-key-change-in-production
@@ -27,7 +27,7 @@ services:
         # Point to /api which Nginx will proxy to backend
         - VITE_API_URL=/api
     ports:
-      - "8001:80"
+      - "8085:80"
     depends_on:
       - backend
     restart: always
