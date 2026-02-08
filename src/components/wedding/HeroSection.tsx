@@ -67,22 +67,22 @@ const HeroSection = ({
       if (isPlaying) {
         // Only try to play if we are in video phase and not completed
         if (isVideoPhase && !showContent) {
-           const playPromise = videoElement.play();
-           if (playPromise !== undefined) {
-             playPromise
-               .then(() => {
-                 // Playback started
-               })
-               .catch((error) => {
-                 console.log("Autoplay prevented:", error);
-                 setIsMuted(true);
-                 // Retry play if muted
-                 videoElement.muted = true;
-                 videoElement
-                   .play()
-                   .catch((e) => console.error("Retry play failed:", e));
-               });
-           }
+          const playPromise = videoElement.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                // Playback started
+              })
+              .catch((error) => {
+                console.log("Autoplay prevented:", error);
+                setIsMuted(true);
+                // Retry play if muted
+                videoElement.muted = true;
+                videoElement
+                  .play()
+                  .catch((e) => console.error("Retry play failed:", e));
+              });
+          }
         }
       } else {
         videoElement.pause();
@@ -127,7 +127,7 @@ const HeroSection = ({
   };
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-black">
+    <section className="relative h-[100dvh] w-full overflow-hidden bg-black">
       {/* Local Video Background - Always visible during video phase */}
       <AnimatePresence mode="wait">
         {isVideoPhase && !showContent && (
@@ -188,7 +188,7 @@ const HeroSection = ({
 
             {/* Video Controls - Bottom left */}
             <div
-              className="absolute bottom-8 left-8 z-20 flex items-center gap-4"
+              className="absolute bottom-12 md:bottom-8 left-6 md:left-8 z-50 flex items-center gap-4"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Play/Pause Button (Small) */}
@@ -197,7 +197,7 @@ const HeroSection = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 }}
                 onClick={togglePlay}
-                className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+                className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300 active:scale-95"
                 aria-label={isPlaying ? "Pausar" : "Reproduzir"}
               >
                 {isPlaying ? (
@@ -213,7 +213,7 @@ const HeroSection = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 }}
                 onClick={toggleMute}
-                className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+                className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300 active:scale-95"
                 aria-label={isMuted ? "Ativar som" : "Silenciar"}
               >
                 {isMuted ? (
@@ -236,7 +236,7 @@ const HeroSection = ({
                     e.stopPropagation();
                     handleSkipVideo();
                   }}
-                  className="absolute bottom-8 right-8 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300 group"
+                  className="absolute bottom-12 md:bottom-8 right-6 md:right-8 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300 group active:scale-95"
                 >
                   <span className="font-body text-sm tracking-wider">
                     Pular
@@ -251,7 +251,7 @@ const HeroSection = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 2, duration: 1 }}
-              className="absolute bottom-24 left-1/2 transform -translate-x-1/2 text-center z-20 pointer-events-none w-full px-4"
+              className="absolute bottom-28 md:bottom-24 left-1/2 transform -translate-x-1/2 text-center z-20 pointer-events-none w-full px-4"
             >
               <p className="font-heading text-xl md:text-2xl text-white/90 tracking-widest whitespace-nowrap">
                 TALY <span className="text-white">&</span> WHOLLO
