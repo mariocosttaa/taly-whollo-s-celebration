@@ -26,82 +26,69 @@ const HeroSection = ({
   const [showContent, setShowContent] = useState(false);
   const [isMuted, setIsMuted] = useState(true); // Start muted for better autoplay support
   const [isPlaying, setIsPlaying] = useState(true);
-  const playerRef = useRef<HTMLIFrameElement>(null);
-
-  // Handle YouTube API messages and reset state
-  useEffect(() => {
-    if (!isVideoPhase) return;
-
-    // Reset state for new video phase
-    setShowContent(false);
-    setCanSkip(false);
-    setIsPlaying(true);
-
-    const handleMessage = (event: MessageEvent) => {
-      try {
-        if (event.source === playerRef.current?.contentWindow) {
-          const data = JSON.parse(event.data);
-
-          // YouTube Player State: 0 = ended, 1 = playing, 2 = paused
-          if (data.event === "onStateChange") {
-            if (data.info === 0) handleSkipVideo();
-            if (data.info === 1) setIsPlaying(true);
-            if (data.info === 2) setIsPlaying(false);
-          }
-        }
-      } catch (e) {
-        // Ignore non-JSON messages
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-
-    // Allow skip after 3 seconds
-    const skipTimer = setTimeout(() => {
-      setCanSkip(true);
-    }, 3000);
-
-    return () => {
-      window.removeEventListener("message", handleMessage);
-      clearTimeout(skipTimer);
-    };
-  }, [isVideoPhase]);
+  const playerRef = useRef<HTMLVideoElement>(null);
 
   const handleSkipVideo = () => {
     setShowContent(true);
     setTimeout(() => {
       onVideoComplete();
-    }, 800); // Slightly longer delay for smoother transition
-  };
-
-  const toggleMute = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMuted(!isMuted);
-    // Post message to YouTube iframe to toggle mute
-    if (playerRef.current?.contentWindow) {
-      playerRef.current.contentWindow.postMessage(
-        JSON.stringify({
-          event: "command",
-          func: isMuted ? "unMute" : "mute",
-        }),
-        "*",
-      );
-    }
+    }, 800);
   };
 
   const togglePlay = () => {
     const newStatus = !isPlaying;
     setIsPlaying(newStatus);
+  };
 
-    if (playerRef.current?.contentWindow) {
-      playerRef.current.contentWindow.postMessage(
-        JSON.stringify({
-          event: "command",
-          func: newStatus ? "playVideo" : "pauseVideo",
-        }),
-        "*",
-      );
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMuted(!isMuted);
+  };
+
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
+  // Handle Video End and Auto Scroll
+  const handleVideoEnd = () => {
+    setIsPlaying(false);
+    handleSkipVideo();
+    // Scroll to next section after a brief delay for transition
+    setTimeout(() => {
+      const nextSection = document.getElementById("countdown");
+      if (nextSection) {
+        nextSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 1000);
+  };
+
+  useEffect(() => {
+    const videoElement = playerRef.current;
+    if (videoElement) {
+      if (isPlaying) {
+        const playPromise = videoElement.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              // Playback started
+            })
+            .catch((error) => {
+              console.log("Autoplay prevented:", error);
+              setIsMuted(true);
+              // Retry play if muted
+              videoElement.muted = true;
+              videoElement
+                .play()
+                .catch((e) => console.error("Retry play failed:", e));
+            });
+        }
+      } else {
+        videoElement.pause();
+      }
+      videoElement.muted = isMuted;
     }
+  }, [isPlaying, isMuted]);
+
+  const handleVideoLoad = () => {
+    setIsVideoLoaded(true);
   };
 
   const containerVariants = {
@@ -111,18 +98,6 @@ const HeroSection = ({
       transition: {
         staggerChildren: 0.15,
         delayChildren: 0.3,
-      },
-    },
-  };
-
-  const letterVariants = {
-    hidden: { y: 100, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut" as const,
       },
     },
   };
@@ -139,12 +114,9 @@ const HeroSection = ({
     },
   };
 
-  const name1 = "TALY";
-  const name2 = "WHOLLO";
-
   return (
     <section className="relative h-screen w-full overflow-hidden bg-black">
-      {/* YouTube Video Background - Always visible during video phase */}
+      {/* Local Video Background - Always visible during video phase */}
       <AnimatePresence mode="wait">
         {isVideoPhase && !showContent && (
           <motion.div
@@ -156,25 +128,26 @@ const HeroSection = ({
             onClick={togglePlay} // Clicking anywhere toggles play/pause
           >
             <div className="absolute inset-0 overflow-hidden">
-              <iframe
+              <video
                 ref={playerRef}
-                className="absolute"
-                src={`https://www.youtube.com/embed/V3z8Gy92-_Q?autoplay=1&mute=1&loop=0&controls=0&showinfo=0&modestbranding=1&rel=0&enablejsapi=1&playsinline=1&start=0`}
-                title="Wedding Video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "177.78vh",
-                  height: "100vh",
-                  minWidth: "100%",
-                  minHeight: "56.25vw",
-                  pointerEvents: "none",
-                }}
+                className={`absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-700 ${isVideoLoaded ? "opacity-100" : "opacity-0"}`}
+                src="/taly-e-whollo-video.mp4"
+                poster={coupleRomantic}
+                preload="auto"
+                autoPlay
+                playsInline
+                loop={false}
+                muted={isMuted}
+                onEnded={handleVideoEnd}
+                onCanPlay={handleVideoLoad}
+                style={{ pointerEvents: "none" }}
               />
+              {!isVideoLoaded && (
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${coupleRomantic})` }}
+                />
+              )}
             </div>
 
             {/* Subtle gradient overlay for better readability */}
