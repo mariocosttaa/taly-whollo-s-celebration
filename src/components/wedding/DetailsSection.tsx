@@ -22,7 +22,7 @@ const DetailsSection = () => {
     {
       icon: UtensilsCrossed,
       title: "Copo-d'Água",
-      time: "20:00h",
+      time: "19:30h",
       venue: "Salão Maldini Eventos",
       location: "Montijo",
       mapUrl: "https://maps.google.com/?q=Salao+Maldini+Eventos+Montijo",

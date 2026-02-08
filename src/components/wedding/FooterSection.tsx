@@ -21,7 +21,7 @@ const FooterSection = () => {
         <div className="flex items-center justify-center gap-4 text-white/60 font-body tracking-[0.2em] text-sm md:text-base uppercase mb-12">
           <span>14 . 08 . 2026</span>
           <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-          <span>Lisboa</span>
+          <span>Montijo</span>
         </div>
 
         <div className="w-24 h-px bg-white/10 mx-auto mb-12" />

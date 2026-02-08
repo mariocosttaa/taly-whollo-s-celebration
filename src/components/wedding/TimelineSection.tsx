@@ -22,7 +22,7 @@ const TimelineSection = () => {
       icon: Wine,
     },
     {
-      time: '20:00',
+      time: '19:30',
       title: 'Copo-d\'Água',
       description: 'Jantar e festa no Salão Maldini Eventos',
       details: 'Um jantar requintado seguido de muita música e dança pela noite dentro.',
