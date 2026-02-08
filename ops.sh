@@ -18,11 +18,15 @@ if [ "$IS_INSIDE_CONTAINER" -eq 1 ]; then
     case $COMMAND in
         "migrate")
             echo "🔄 Rodando migrações do banco de dados..."
-            npx prisma migrate deploy
+            cd /app && npx prisma migrate deploy
             ;;
         "seed")
             echo "🌱 Rodando seed do banco de dados..."
-            npx prisma db seed
+            cd /app && npx prisma db seed
+            ;;
+        "create-user")
+            echo "👤 Criando usuário administrador..."
+            cd /app && npm run create-user
             ;;
         "shell")
             echo "⚠️  Você já está no terminal do container."
@@ -31,7 +35,7 @@ if [ "$IS_INSIDE_CONTAINER" -eq 1 ]; then
             echo "⚠️  Para ver logs dentro do container, verifique a saída padrão da aplicação (stdout)."
             ;;
         *)
-            echo "Uso (dentro do container): ./ops.sh [migrate|seed]"
+            echo "Uso (dentro do container): ./ops.sh [migrate|seed|create-user]"
             ;;
     esac
     exit 0
@@ -88,7 +92,11 @@ case $COMMAND in
         echo "🌱 Rodando seed do banco de dados..."
         docker exec -it $CONTAINER_ID npx prisma db seed
         ;;
+    "create-user")
+        echo "👤 Criando usuário administrador..."
+        docker exec -it $CONTAINER_ID npm run create-user
+        ;;
     *)
-        echo "Uso: ./ops.sh [shell|logs|migrate|seed]"
+        echo "Uso: ./ops.sh [shell|logs|migrate|seed|create-user]"
         ;;
 esac
