@@ -7,18 +7,20 @@
 @layer base {
   :root {
     /* Wedding Sage Green Theme */
-    --background: 60 20% 97%;
+    /* Background: #F9F9F7 -> 60 11% 97% */
+    --background: 60 11% 97%;
+    /* Foreground: #1A1A1A -> 0 0% 10% */
     --foreground: 0 0% 10%;
 
-    --card: 60 20% 98%;
+    --card: 60 11% 98%;
     --card-foreground: 0 0% 10%;
 
-    --popover: 60 20% 98%;
+    --popover: 60 11% 98%;
     --popover-foreground: 0 0% 10%;
 
-    /* Sage Green Primary */
-    --primary: 78 25% 48%;
-    --primary-foreground: 60 20% 97%;
+    /* Sage Green Primary: #8A9A5B -> 78 26% 48% */
+    --primary: 78 26% 48%;
+    --primary-foreground: 60 11% 97%;
 
     /* Warm cream secondary */
     --secondary: 45 30% 94%;
@@ -35,18 +37,18 @@
 
     --border: 45 20% 88%;
     --input: 45 20% 88%;
-    --ring: 78 25% 48%;
+    --ring: 78 26% 48%;
 
     --radius: 0.5rem;
 
     /* Custom Wedding Colors */
-    --sage: 78 25% 48%;
+    --sage: 78 26% 48%;
     --sage-light: 78 20% 85%;
     --sage-dark: 78 30% 35%;
     --olive: 78 35% 38%;
-    --cream: 45 40% 95%;
+    --cream: 60 11% 97%;
     --gold: 43 74% 49%;
-    --charcoal: 0 0% 15%;
+    --charcoal: 0 0% 10%;
 
     /* Typography */
     --font-heading: 'Playfair Display', serif;
