@@ -54,3 +54,18 @@ O projeto está configurado com Docker para facilitar o deploy.
 ```bash
 docker-compose up -d --build
 ```
+
+## Gestão em Produção (Docker)
+
+Para facilitar o acesso ao terminal do backend em produção, use o script `ops.sh`:
+
+```bash
+# Acessar o terminal do backend (shell)
+./ops.sh
+
+# Ver logs
+./ops.sh logs
+
+# Rodar migrações
+./ops.sh migrate
+```
