@@ -299,7 +299,7 @@ const HeroSection = ({
                   <img
                     src="/taly-e-whollo-logo.png"
                     alt="Taly & Whollo"
-                    className="h-[30rem] sm:h-[36rem] md:h-[42rem] lg:h-[48rem] w-auto object-contain invert brightness-0 opacity-90 max-w-[95vw] drop-shadow-2xl"
+                    className="h-[18rem] sm:h-[22rem] md:h-[28rem] lg:h-[32rem] max-h-[60vh] w-auto object-contain invert brightness-0 opacity-90 max-w-[90vw] drop-shadow-2xl"
                   />
                 </motion.div>
               </motion.div>
