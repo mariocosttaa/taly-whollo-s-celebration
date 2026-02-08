@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import coupleRomantic from "@/assets/couple-romantic.jpg";
+import coupleHelipad from "@/assets/couple-helipad.jpg";
 // FloralDecoration removed as requested
 
 interface HeroSectionProps {
@@ -276,7 +277,7 @@ const HeroSection = ({
             {/* Background Image with Overlay */}
             <div className="absolute inset-0 z-0">
               <img
-                src={coupleRomantic}
+                src={coupleHelipad}
                 alt="Background"
                 className="w-full h-full object-cover object-[75%_center] md:object-center opacity-60"
               />

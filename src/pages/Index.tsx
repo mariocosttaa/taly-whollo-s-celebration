@@ -12,6 +12,7 @@ import FooterSection from "@/components/wedding/FooterSection";
 import GiftSection from "@/components/wedding/GiftSection";
 import SurpriseSection from "@/components/wedding/SurpriseSection";
 import { MusicPlayer } from "@/components/wedding/MusicPlayer";
+import { RotateDevicePrompt } from "@/components/ui/RotateDevicePrompt";
 
 const Index = () => {
   const [isVideoPhase, setIsVideoPhase] = useState(() => {
@@ -87,6 +88,7 @@ const Index = () => {
       </AnimatePresence>
 
       <main>
+        <RotateDevicePrompt />
         <MusicPlayer shouldPlay={!isVideoPhase} />
         <HeroSection
           onVideoComplete={handleVideoComplete}
