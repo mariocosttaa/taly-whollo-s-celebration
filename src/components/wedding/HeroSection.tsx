@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  Loader2,
   ChevronDown,
   SkipForward,
   Volume2,
@@ -64,31 +65,42 @@ const HeroSection = ({
     const videoElement = playerRef.current;
     if (videoElement) {
       if (isPlaying) {
-        const playPromise = videoElement.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              // Playback started
-            })
-            .catch((error) => {
-              console.log("Autoplay prevented:", error);
-              setIsMuted(true);
-              // Retry play if muted
-              videoElement.muted = true;
-              videoElement
-                .play()
-                .catch((e) => console.error("Retry play failed:", e));
-            });
+        // Only try to play if we are in video phase and not completed
+        if (isVideoPhase && !showContent) {
+           const playPromise = videoElement.play();
+           if (playPromise !== undefined) {
+             playPromise
+               .then(() => {
+                 // Playback started
+               })
+               .catch((error) => {
+                 console.log("Autoplay prevented:", error);
+                 setIsMuted(true);
+                 // Retry play if muted
+                 videoElement.muted = true;
+                 videoElement
+                   .play()
+                   .catch((e) => console.error("Retry play failed:", e));
+               });
+           }
         }
       } else {
         videoElement.pause();
       }
       videoElement.muted = isMuted;
     }
-  }, [isPlaying, isMuted]);
+  }, [isPlaying, isMuted, isVideoPhase, showContent]);
 
   const handleVideoLoad = () => {
     setIsVideoLoaded(true);
+  };
+
+  const handleTimeUpdate = () => {
+    if (playerRef.current) {
+      if (playerRef.current.currentTime > 15) {
+        setCanSkip(true);
+      }
+    }
   };
 
   const containerVariants = {
@@ -132,7 +144,6 @@ const HeroSection = ({
                 ref={playerRef}
                 className={`absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-700 ${isVideoLoaded ? "opacity-100" : "opacity-0"}`}
                 src="/taly-e-whollo-video.mp4"
-                poster={coupleRomantic}
                 preload="auto"
                 autoPlay
                 playsInline
@@ -140,13 +151,18 @@ const HeroSection = ({
                 muted={isMuted}
                 onEnded={handleVideoEnd}
                 onCanPlay={handleVideoLoad}
+                onTimeUpdate={handleTimeUpdate}
                 style={{ pointerEvents: "none" }}
               />
               {!isVideoLoaded && (
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${coupleRomantic})` }}
-                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black z-20">
+                  <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-10 h-10 text-white/80 animate-spin" />
+                    <p className="text-white/60 font-body text-xs tracking-[0.2em] uppercase">
+                      Carregando...
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
 

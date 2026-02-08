@@ -14,8 +14,14 @@ import SurpriseSection from "@/components/wedding/SurpriseSection";
 import { MusicPlayer } from "@/components/wedding/MusicPlayer";
 
 const Index = () => {
-  const [isVideoPhase, setIsVideoPhase] = useState(true);
-  const [scrollLocked, setScrollLocked] = useState(true);
+  const [isVideoPhase, setIsVideoPhase] = useState(() => {
+    const watched = localStorage.getItem("introVideoWatched");
+    return watched !== "true";
+  });
+  const [scrollLocked, setScrollLocked] = useState(() => {
+    const watched = localStorage.getItem("introVideoWatched");
+    return watched !== "true";
+  });
   const [showGallery, setShowGallery] = useState(false);
 
   // Lock scroll during video phase
@@ -41,6 +47,7 @@ const Index = () => {
   }, [scrollLocked]);
 
   const handleVideoComplete = () => {
+    localStorage.setItem("introVideoWatched", "true");
     setIsVideoPhase(false);
     setScrollLocked(false);
 
