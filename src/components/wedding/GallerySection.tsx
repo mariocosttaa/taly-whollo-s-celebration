@@ -8,16 +8,26 @@ import coupleKiss from '@/assets/couple-kiss-helicopter.jpg';
 import coupleHelipad from '@/assets/couple-helipad.jpg';
 import coupleSunset from '@/assets/couple-sunset.jpg';
 import coupleRomantic from '@/assets/couple-romantic.jpg';
+import coupleGallery1 from '@/assets/couple-gallery-1.jpg';
+import coupleGallery2 from '@/assets/couple-gallery-2.jpg';
+import coupleGallery3 from '@/assets/couple-gallery-3.jpg';
+import coupleGallery4 from '@/assets/couple-gallery-4.jpg';
+import coupleGallery5 from '@/assets/couple-gallery-5.jpg';
 
 const GallerySection = () => {
   const images = [
     { src: coupleHelicopter, alt: 'Casal elegante junto ao helicóptero', span: 'col-span-1 md:col-span-1 row-span-2' },
+    { src: coupleGallery1, alt: 'Momento inesquecível', span: 'col-span-1 md:col-span-1 row-span-1' },
     { src: coupleEmbrace, alt: 'Abraço romântico', span: 'col-span-1 md:col-span-1 row-span-1' },
     { src: coupleFashion, alt: 'Casal estiloso', span: 'col-span-1 md:col-span-1 row-span-1' },
+    { src: coupleGallery2, alt: 'Nossa celebração', span: 'col-span-1 md:col-span-1 row-span-2' },
     { src: coupleKiss, alt: 'Beijo apaixonado', span: 'col-span-1 md:col-span-1 row-span-2' },
     { src: coupleWalking, alt: 'Caminhada de mãos dadas', span: 'col-span-1 md:col-span-1 row-span-1' },
+    { src: coupleGallery3, alt: 'Sorrisos', span: 'col-span-1 md:col-span-1 row-span-1' },
     { src: coupleHelipad, alt: 'No heliporto', span: 'col-span-2 md:col-span-2 row-span-1' },
+    { src: coupleGallery4, alt: 'Amor eterno', span: 'col-span-1 md:col-span-1 row-span-2' },
     { src: coupleSunset, alt: 'Por do sol romântico', span: 'col-span-1 md:col-span-1 row-span-1' },
+    { src: coupleGallery5, alt: 'Felicidade', span: 'col-span-1 md:col-span-1 row-span-1' },
     { src: coupleRomantic, alt: 'Momento romântico', span: 'col-span-1 md:col-span-1 row-span-1' },
   ];
 
