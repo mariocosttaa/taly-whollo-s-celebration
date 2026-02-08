@@ -25,7 +25,7 @@ const HeroSection = ({
 }: HeroSectionProps) => {
   const [canSkip, setCanSkip] = useState(false);
   const [showContent, setShowContent] = useState(false);
-  const [isMuted, setIsMuted] = useState(true); // Start muted for better autoplay support
+  const [isMuted, setIsMuted] = useState(false); // Start unmuted, browser might block but we have fallback
   const [isPlaying, setIsPlaying] = useState(true);
   const playerRef = useRef<HTMLVideoElement>(null);
 

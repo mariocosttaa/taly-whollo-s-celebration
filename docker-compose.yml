@@ -8,12 +8,12 @@ services:
     ports:
       - "3005:3000"
     environment:
-      - DATABASE_URL=file:./dev.db
-      - JWT_SECRET=super-secret-key-change-in-production
+      - DATABASE_URL=${DATABASE_URL:-file:./dev.db}
+      - JWT_SECRET=${JWT_SECRET:-super-secret-key-change-in-production}
       # Add other env vars from backend/.env here
     volumes:
-      # Persist the SQLite database file
-      - ./backend/prisma/dev.db:/app/prisma/dev.db
+      # Persist the SQLite database file using a named volume
+      - sqlite_data:/app/prisma
     restart: always
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
@@ -57,3 +57,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  sqlite_data:
