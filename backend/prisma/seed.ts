@@ -7,20 +7,9 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = 'admin@talywhollo.com';
-  const password = 'admin'; // Change this in production
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const user = await prisma.user.upsert({
-    where: { email },
-    update: {},
-    create: {
-      email,
-      password: hashedPassword,
-    },
-  });
-
-  console.log({ user });
+  // User creation via seed is disabled for security.
+  // Use `npm run create-user` to create admin users.
+  console.log('Seed: No default users created. Use "npm run create-user" to create an admin.');
 }
 
 main()
