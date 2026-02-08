@@ -1,54 +1,34 @@
-import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { FloralDecoration } from "./FloralDecoration";
 
 const FooterSection = () => {
   return (
-    <footer className="relative py-16 bg-background border-t border-border">
-      <div className="max-w-4xl mx-auto px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* Names */}
-          <h2 className="font-heading text-3xl md:text-4xl text-charcoal mb-4">
-            Taly <span className="text-primary">&</span> Whollo
-          </h2>
+    <footer className="relative bg-charcoal text-cream py-16 md:py-24 overflow-hidden">
+      {/* Decorative Elements */}
+      <FloralDecoration
+        variant="center"
+        className="opacity-10 mix-blend-overlay"
+      />
 
-          {/* Date */}
-          <p className="font-body text-sm tracking-[0.3em] uppercase text-muted-foreground mb-8">
-            14 de Agosto de 2026
-          </p>
+      <div className="relative max-w-7xl mx-auto px-6 text-center">
+        <div className="flex justify-center mb-8">
+          <img
+            src="/taly-e-whollo-logo.png"
+            alt="Taly & Whollo"
+            className="h-[30rem] sm:h-[36rem] md:h-[42rem] lg:h-[48rem] w-auto opacity-90 invert brightness-0 max-w-[95vw] object-contain"
+          />
+        </div>
 
-          {/* Divider */}
-          <div className="divider-ornament mb-8" />
+        <div className="flex items-center justify-center gap-4 text-white/60 font-body tracking-[0.2em] text-sm md:text-base uppercase mb-12">
+          <span>14 . 08 . 2026</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          <span>Lisboa</span>
+        </div>
 
-          {/* Message */}
-          <p className="font-body text-muted-foreground max-w-md mx-auto mb-8">
-            Esperamos vê-los neste dia tão especial para nós. Que o amor que sentimos um pelo outro inspire todos à nossa volta.
-          </p>
+        <div className="w-24 h-px bg-white/10 mx-auto mb-12" />
 
-          {/* Heart */}
-          <motion.div
-            animate={{ 
-              scale: [1, 1.1, 1],
-            }}
-            transition={{ 
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sage-light"
-          >
-            <Heart className="w-6 h-6 text-primary fill-primary" />
-          </motion.div>
-
-          {/* Copyright */}
-          <p className="mt-8 font-body text-xs text-muted-foreground/60">
-            © 2026 Taly & Whollo • Feito com amor
-          </p>
-        </motion.div>
+        <p className="font-body text-white/40 text-sm flex items-center justify-center gap-2">
+          feito por bindamy.site todos os direitos reservados..
+        </p>
       </div>
     </footer>
   );
