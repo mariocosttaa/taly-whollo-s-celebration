@@ -1,10 +1,9 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
-COPY entrypoint.sh ./
 
 RUN npm ci
 RUN npx prisma generate
@@ -13,9 +12,11 @@ COPY . .
 
 RUN npm run build
 
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
