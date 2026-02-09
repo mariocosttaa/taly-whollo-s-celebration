@@ -23,6 +23,9 @@ else
     exit 1
 fi
 
+echo "📂 Listing dist directory for debugging:"
+ls -R dist || echo "⚠️ dist directory not found!"
+
 echo "🌱 Seeding database (if needed)..."
 # Optional: Run seed if specific env var is set or just always try safely?
 # npx prisma db seed || echo "⚠️ Seed failed or not needed."
