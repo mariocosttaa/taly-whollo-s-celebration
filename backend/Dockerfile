@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
+COPY entrypoint.sh ./
 
 RUN npm ci
 RUN npx prisma generate
@@ -21,8 +22,9 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
 
 EXPOSE 3000
 
 # Use a shell script to handle migration and startup
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
+ENTRYPOINT ["./entrypoint.sh"]

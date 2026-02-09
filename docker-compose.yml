@@ -34,7 +34,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.frontend
       args:
         # Build time argument for Vite
         # Point to /api which Nginx will proxy to backend
