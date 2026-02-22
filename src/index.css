@@ -98,6 +98,15 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
   }
+
+  /* Admin: mobile-first readable scale, avoid zoom issues */
+  @media (max-width: 768px) {
+    .admin-area {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+  }
 }
 
 @layer components {

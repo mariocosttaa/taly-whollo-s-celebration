@@ -96,7 +96,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <div className="min-h-screen bg-stone-100/80 flex">
+    <div className="admin-area min-h-screen bg-stone-100/80 flex">
       {/* Desktop Sidebar - premium dark */}
       <aside className="hidden md:flex md:flex-col w-72 fixed h-full z-30 bg-gradient-to-b from-stone-800 to-stone-900 border-r border-stone-700/50 shadow-elegant">
         <SidebarContent />
@@ -112,7 +112,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-stone-300 hover:text-white hover:bg-white/10">
+            <Button variant="ghost" size="icon" className="min-w-[44px] min-h-[44px] text-stone-300 hover:text-white hover:bg-white/10 touch-manipulation">
               <Menu className="w-6 h-6" />
             </Button>
           </SheetTrigger>
@@ -122,8 +122,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </Sheet>
       </div>
 
-      {/* Main content */}
-      <main className="flex-1 md:ml-72 min-h-screen p-4 sm:p-6 lg:p-10 mt-16 md:mt-0">
+      {/* Main content - mobile: larger padding and base text */}
+      <main className="flex-1 md:ml-72 min-h-screen p-4 sm:p-6 lg:p-10 mt-16 md:mt-0 text-base">
         <div className="max-w-6xl mx-auto">
           {children}
         </div>

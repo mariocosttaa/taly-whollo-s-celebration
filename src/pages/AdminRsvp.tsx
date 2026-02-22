@@ -104,7 +104,7 @@ const AdminRsvp = () => {
                     placeholder="Nome ou email..."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    className="pl-9 rounded-xl bg-stone-50/80 border-stone-200"
+                    className="pl-9 rounded-xl min-h-[44px] sm:min-h-0 bg-stone-50/80 border-stone-200 text-base sm:text-sm"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -114,13 +114,13 @@ const AdminRsvp = () => {
                       setAttendance(e.target.value as AttendanceFilter);
                       setPage(1);
                     }}
-                    className="h-10 rounded-xl border border-stone-200 bg-stone-50/80 px-3 text-sm text-stone-700"
+                    className="min-h-[44px] sm:h-10 rounded-xl border border-stone-200 bg-stone-50/80 px-3 text-base sm:text-sm text-stone-700"
                   >
                     <option value="">Todos</option>
                     <option value="confirmed">Confirmados</option>
                     <option value="declined">Recusados</option>
                   </select>
-                  <Button type="submit" variant="secondary" size="sm" className="rounded-xl">
+                  <Button type="submit" variant="secondary" size="sm" className="rounded-xl min-h-[44px] sm:min-h-0 touch-manipulation">
                     <Search className="w-4 h-4 sm:mr-1" />
                     <span className="hidden sm:inline">Pesquisar</span>
                   </Button>
@@ -131,8 +131,8 @@ const AdminRsvp = () => {
               {total} {total === 1 ? "resposta" : "respostas"}
               {(search || attendance) && " (filtrado)"}
             </p>
-            <p className="text-xs text-stone-400 mt-2 flex items-center gap-1.5">
-              <MessageSquare className="w-3.5 h-3.5" />
+            <p className="text-sm sm:text-xs text-stone-500 mt-2 flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" />
               Clique numa mensagem para ver o texto completo.
             </p>
           </CardHeader>
@@ -151,13 +151,13 @@ const AdminRsvp = () => {
               <>
                 <div className="sm:hidden divide-y divide-stone-100">
                   {rsvps.map((rsvp) => (
-                    <div key={rsvp.id} className="p-4 space-y-1">
-                      <p className="font-medium text-stone-800">{rsvp.name}</p>
-                      <p className="text-xs text-stone-500">
+                    <div key={rsvp.id} className="p-5 space-y-2">
+                      <p className="font-medium text-stone-800 text-[1rem] leading-snug">{rsvp.name}</p>
+                      <p className="text-sm text-stone-500">
                         {new Date(rsvp.createdAt).toLocaleDateString("pt-PT")} · {rsvp.email || "—"}
                       </p>
                       <span
-                        className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        className={`inline-block px-2.5 py-1 rounded-full text-sm font-medium ${
                           rsvp.attendance === "confirmed"
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
@@ -168,13 +168,13 @@ const AdminRsvp = () => {
                       <button
                         type="button"
                         onClick={() => setMessageModal(rsvp)}
-                        className="text-xs text-stone-500 mt-1 text-left w-full rounded px-2 py-1 -mx-2 -my-1 hover:bg-stone-100 transition-colors flex items-center gap-1"
+                        className="min-h-[44px] w-full rounded-xl px-4 py-3 mt-2 text-left hover:bg-stone-100 active:bg-stone-200 flex items-center gap-2 border border-stone-100 text-stone-600 text-sm touch-manipulation"
                       >
-                        <MessageSquare className="w-3.5 h-3.5 shrink-0 text-primary/70" />
+                        <MessageSquare className="w-5 h-5 shrink-0 text-primary/70" />
                         <span className="truncate flex-1">
                           {rsvp.message ? rsvp.message : "(sem mensagem)"}
                         </span>
-                        <span className="text-primary text-[10px] shrink-0">Ver</span>
+                        <span className="text-primary font-medium shrink-0">Ver</span>
                       </button>
                     </div>
                   ))}
@@ -238,7 +238,7 @@ const AdminRsvp = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-xl"
+                        className="rounded-xl min-h-[44px] sm:min-h-0 touch-manipulation"
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
                         disabled={page <= 1 || loading}
                       >
@@ -248,7 +248,7 @@ const AdminRsvp = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-xl"
+                        className="rounded-xl min-h-[44px] sm:min-h-0 touch-manipulation"
                         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                         disabled={page >= totalPages || loading}
                       >
