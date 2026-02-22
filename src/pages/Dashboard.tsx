@@ -136,7 +136,7 @@ const Dashboard = () => {
                     {stats?.visits.totalVisits ?? 0}
                   </p>
                   <p className="text-xs text-stone-500 mt-0.5">
-                    pessoas (não conta admin) · +{stats?.visits.last24h ?? 0} nas últimas 24h
+                    +{stats?.visits.last24h ?? 0} nas últimas 24h
                   </p>
                 </div>
               </CardContent>
