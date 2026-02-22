@@ -12,13 +12,34 @@ export class RsvpService {
     });
   }
 
-  findAll(page: number = 1, limit: number = 10) {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+  ) {
     const skip = (page - 1) * limit;
-    return this.prisma.rsvp.findMany({
-      skip,
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-    });
+    const take = Math.min(Math.max(limit, 1), 100);
+    const term = search?.trim();
+    const where = term
+      ? {
+          OR: [
+            { name: { contains: term } },
+            { email: { contains: term } },
+            { attendance: { contains: term } },
+          ],
+        }
+      : undefined;
+
+    const [data, total] = await Promise.all([
+      this.prisma.rsvp.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.rsvp.count({ where }),
+    ]);
+    return { data, total };
   }
   
   async getStats() {

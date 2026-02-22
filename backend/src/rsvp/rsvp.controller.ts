@@ -14,8 +14,12 @@ export class RsvpController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll(@Query('page') page: string = '1', @Query('limit') limit: string = '10') {
-    return this.rsvpService.findAll(+page, +limit);
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ) {
+    return this.rsvpService.findAll(+page, +limit, search);
   }
 
   @UseGuards(JwtAuthGuard)
