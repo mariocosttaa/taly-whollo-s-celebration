@@ -2,18 +2,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 
+const STORAGE_KEY = "horizontal_prompt_seen";
+
 export const RotateDevicePrompt = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [countdown, setCountdown] = useState(10);
 
   useEffect(() => {
-    // Check if mobile and portrait
+    // Only show prompt on first visit (per device). After first time, go straight to site.
+    const alreadySeen = localStorage.getItem(STORAGE_KEY) === "1";
+
     const checkOrientation = () => {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-      
-      // Only show if it's mobile, portrait, and we haven't dismissed it yet
-      // But user asked for "10 seconds upon entering", so we start it on mount if condition met
+
+      if (alreadySeen) {
+        setIsVisible(false);
+        return;
+      }
       if (isMobile && isPortrait) {
         setIsVisible(true);
       } else {
@@ -23,18 +29,14 @@ export const RotateDevicePrompt = () => {
 
     checkOrientation();
 
-    // Listen for orientation changes
     const mediaQuery = window.matchMedia("(orientation: portrait)");
     const handleOrientationChange = (e: MediaQueryListEvent) => {
       if (!e.matches) {
-        // If landscape, hide immediately
         setIsVisible(false);
-      } else {
-         // If back to portrait, we don't necessarily show it again if countdown is done?
-         // User said "upon entering". Let's keep it simple: if countdown > 0 and portrait, show.
+        localStorage.setItem(STORAGE_KEY, "1");
       }
     };
-    
+
     mediaQuery.addEventListener("change", handleOrientationChange);
     return () => mediaQuery.removeEventListener("change", handleOrientationChange);
   }, []);
@@ -46,6 +48,7 @@ export const RotateDevicePrompt = () => {
         setCountdown((prev) => {
           if (prev <= 1) {
             setIsVisible(false);
+            localStorage.setItem(STORAGE_KEY, "1");
             return 0;
           }
           return prev - 1;
