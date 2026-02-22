@@ -46,4 +46,17 @@ export class AuthService {
     const { password, ...result } = user;
     return result;
   }
+
+  async findAll() {
+    const users = await this.prisma.user.findMany({
+      orderBy: { id: 'asc' },
+      select: { id: true, email: true },
+    });
+    return users;
+  }
+
+  async remove(id: number) {
+    await this.prisma.user.delete({ where: { id } });
+    return { deleted: true };
+  }
 }
