@@ -22,7 +22,7 @@ api.interceptors.response.use(
       localStorage.removeItem('auth_token');
       const path = window.location.pathname || '';
       if (path.startsWith('/admin') && path !== '/admin') {
-        window.location.href = '/admin';
+        window.location.replace('/admin');
       }
     }
     return Promise.reject(error);
