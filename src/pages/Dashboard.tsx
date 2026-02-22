@@ -24,8 +24,14 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { Loader2, MessageCircle, CheckCircle, XCircle, Heart, Users, Search, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { Loader2, MessageCircle, CheckCircle, XCircle, Heart, Users, Search, ChevronLeft, ChevronRight, ArrowRight, MessageSquare } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Stats {
   visits: { totalVisits: number; last24h: number };
@@ -61,6 +67,7 @@ const Dashboard = () => {
   const [rsvpSearchInput, setRsvpSearchInput] = useState("");
   const [rsvpAttendance, setRsvpAttendance] = useState<AttendanceFilter>("");
   const [rsvpLoading, setRsvpLoading] = useState(false);
+  const [rsvpMessageModal, setRsvpMessageModal] = useState<Rsvp | null>(null);
   const [last7Days, setLast7Days] = useState<Last7DaysItem[]>([]);
   const [loading, setLoading] = useState(true);
   const initialFetchDone = useRef(false);
@@ -377,6 +384,10 @@ const Dashboard = () => {
                   <option value="declined">Recusados</option>
                 </select>
               </div>
+              <p className="px-4 sm:px-6 text-xs text-stone-400 flex items-center gap-1.5">
+                <MessageSquare className="w-3.5 h-3.5" />
+                Clique numa mensagem para ver o texto completo.
+              </p>
               {rsvpLoading ? (
                 <div className="flex items-center justify-center py-12 gap-2">
                   <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -406,6 +417,15 @@ const Dashboard = () => {
                         >
                           {rsvp.attendance === "confirmed" ? "Confirmado" : "Recusado"}
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => setRsvpMessageModal(rsvp)}
+                          className="text-xs text-stone-500 mt-1 text-left w-full rounded px-2 py-1 -mx-2 -my-1 hover:bg-stone-100 flex items-center gap-1"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5 shrink-0 text-primary/70" />
+                          <span className="truncate flex-1">{rsvp.message || "(sem mensagem)"}</span>
+                          <span className="text-primary text-[10px] shrink-0">Ver</span>
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -417,7 +437,7 @@ const Dashboard = () => {
                           <TableHead className="font-semibold text-stone-600">Nome</TableHead>
                           <TableHead className="font-semibold text-stone-600">Email</TableHead>
                           <TableHead className="font-semibold text-stone-600">Status</TableHead>
-                          <TableHead className="font-semibold text-stone-600 max-w-[200px]">Mensagem</TableHead>
+                          <TableHead className="font-semibold text-stone-600 max-w-[200px]">Mensagem (clique para ver)</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -439,8 +459,16 @@ const Dashboard = () => {
                                 {rsvp.attendance === "confirmed" ? "Confirmado" : "Recusado"}
                               </span>
                             </TableCell>
-                            <TableCell className="max-w-[200px] truncate text-stone-500">
-                              {rsvp.message || "—"}
+                            <TableCell className="max-w-[200px] p-0">
+                              <button
+                                type="button"
+                                onClick={() => setRsvpMessageModal(rsvp)}
+                                className="w-full text-left px-4 py-3 truncate block text-stone-500 hover:bg-stone-50 transition-colors rounded flex items-center gap-2 min-h-[52px]"
+                                title="Clique para ver a mensagem completa"
+                              >
+                                <MessageSquare className="w-4 h-4 shrink-0 text-primary/70" />
+                                <span className="truncate flex-1">{rsvp.message || "—"}</span>
+                              </button>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -480,6 +508,25 @@ const Dashboard = () => {
               )}
             </CardContent>
           </Card>
+
+          <Dialog open={!!rsvpMessageModal} onOpenChange={(open) => !open && setRsvpMessageModal(null)}>
+            <DialogContent className="rounded-2xl border-stone-200 max-w-[90vw] sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="font-heading text-stone-800">
+                  {rsvpMessageModal?.name}
+                </DialogTitle>
+                <p className="text-sm text-stone-500">
+                  {rsvpMessageModal && new Date(rsvpMessageModal.createdAt).toLocaleDateString("pt-PT", { dateStyle: "long" })}
+                  {rsvpMessageModal?.email && ` · ${rsvpMessageModal.email}`}
+                </p>
+              </DialogHeader>
+              <div className="rounded-xl bg-stone-50 border border-stone-100 p-4">
+                <p className="text-sm text-stone-700 whitespace-pre-wrap">
+                  {rsvpMessageModal?.message || "(Sem mensagem)"}
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
         </section>
       </div>
     </AdminLayout>
