@@ -21,6 +21,7 @@ model Visit {
   id        Int      @id @default(autoincrement())
   timestamp DateTime @default(now())
   page      String?
+  name      String?
   userAgent String?
   ip        String?
 }

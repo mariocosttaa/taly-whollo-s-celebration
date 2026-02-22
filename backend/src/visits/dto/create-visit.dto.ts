@@ -7,6 +7,10 @@ export class CreateVisitDto {
 
   @IsOptional()
   @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
   userAgent?: string;
 
   @IsOptional()
