@@ -57,6 +57,12 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Database migrations & production
+
+- **Migrations are safe for production.** Current migrations only add tables or add nullable columns (e.g. `Visit.name`). Existing rows get `NULL` for new columns; no data is overwritten or removed.
+- **When you deploy with Docker:** You do **not** need to run the migrate command yourself. The backend container runs `npx prisma migrate deploy` automatically on startup (see `entrypoint.sh`). Each time the container starts, it applies any pending migrations and then starts the app.
+- **When you deploy without Docker:** Run `npx prisma migrate deploy` once before starting the app (e.g. in your CI/CD or start script). Do not use `prisma migrate dev` in production — that is for local development only.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
