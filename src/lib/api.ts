@@ -15,4 +15,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('auth_token');
+      const path = window.location.pathname || '';
+      if (path.startsWith('/admin') && path !== '/admin') {
+        window.location.href = '/admin';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
