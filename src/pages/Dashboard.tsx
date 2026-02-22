@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import api from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -21,7 +24,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { Loader2, MessageCircle, CheckCircle, XCircle, Heart, Users } from "lucide-react";
+import { Loader2, MessageCircle, CheckCircle, XCircle, Heart, Users, Search, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Stats {
@@ -46,37 +49,75 @@ interface Last7DaysItem {
 const CONFIRMED_COLOR = "hsl(142 76% 36%)";
 const DECLINED_COLOR = "hsl(0 84% 60%)";
 
+const RSVP_PAGE_SIZE = 10;
+type AttendanceFilter = "" | "confirmed" | "declined";
+
 const Dashboard = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [rsvps, setRsvps] = useState<Rsvp[]>([]);
+  const [rsvpTotal, setRsvpTotal] = useState(0);
+  const [rsvpPage, setRsvpPage] = useState(1);
+  const [rsvpSearch, setRsvpSearch] = useState("");
+  const [rsvpSearchInput, setRsvpSearchInput] = useState("");
+  const [rsvpAttendance, setRsvpAttendance] = useState<AttendanceFilter>("");
+  const [rsvpLoading, setRsvpLoading] = useState(false);
   const [last7Days, setLast7Days] = useState<Last7DaysItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const initialFetchDone = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const [visitsRes, rsvpStatsRes, rsvpsRes, daysRes] = await Promise.all([
-          api.get("/visits/stats"),
-          api.get("/rsvp/stats"),
-          api.get("/rsvp?limit=10"),
-          api.get("/visits/stats/last7days"),
-        ]);
+      if (!initialFetchDone.current) {
+        try {
+          const [visitsRes, rsvpStatsRes, rsvpsRes, daysRes] = await Promise.all([
+            api.get("/visits/stats"),
+            api.get("/rsvp/stats"),
+            api.get("/rsvp", { params: { page: 1, limit: RSVP_PAGE_SIZE } }),
+            api.get("/visits/stats/last7days"),
+          ]);
 
-        setStats({
-          visits: visitsRes.data,
-          rsvp: rsvpStatsRes.data,
-        });
-        setRsvps(rsvpsRes.data?.data ?? rsvpsRes.data ?? []);
-        setLast7Days(daysRes.data ?? []);
-      } catch (error) {
-        console.error("Error fetching data", error);
-      } finally {
-        setLoading(false);
+          setStats({
+            visits: visitsRes.data,
+            rsvp: rsvpStatsRes.data,
+          });
+          const rsvpData = rsvpsRes.data;
+          setRsvps(rsvpData?.data ?? rsvpData ?? []);
+          setRsvpTotal(rsvpData?.total ?? 0);
+          setLast7Days(daysRes.data ?? []);
+          initialFetchDone.current = true;
+        } catch (error) {
+          console.error("Error fetching data", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setRsvpLoading(true);
+        try {
+          const params: Record<string, string | number> = { page: rsvpPage, limit: RSVP_PAGE_SIZE };
+          if (rsvpSearch) params.search = rsvpSearch;
+          if (rsvpAttendance) params.attendance = rsvpAttendance;
+          const res = await api.get("/rsvp", { params });
+          const data = res.data;
+          setRsvps(data?.data ?? data ?? []);
+          setRsvpTotal(data?.total ?? 0);
+        } catch (error) {
+          console.error("Error fetching RSVPs", error);
+        } finally {
+          setRsvpLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, []);
+  }, [rsvpPage, rsvpSearch, rsvpAttendance]);
+
+  const handleRsvpSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setRsvpSearch(rsvpSearchInput.trim());
+    setRsvpPage(1);
+  };
+
+  const rsvpTotalPages = Math.max(1, Math.ceil(rsvpTotal / RSVP_PAGE_SIZE));
 
   const formatDate = (d: string) => {
     const date = new Date(d);
@@ -290,15 +331,58 @@ const Dashboard = () => {
 
         {/* Recent RSVPs */}
         <section>
-          <div className="flex items-center gap-2 mb-4">
-            <Heart className="w-5 h-5 text-primary" />
-            <h2 className="font-heading text-lg font-semibold text-stone-700">
-              Respostas recentes
-            </h2>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-primary" />
+              <h2 className="font-heading text-lg font-semibold text-stone-700">
+                Respostas recentes
+              </h2>
+            </div>
+            <Link
+              to="/admin/rsvp"
+              className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+            >
+              Ver todas
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
           <Card className="border-stone-200/80 bg-white shadow-card">
             <CardContent className="p-0 sm:p-6">
-              {rsvps.length === 0 ? (
+              <div className="p-4 sm:px-6 sm:pt-0 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between border-b border-stone-100">
+                <form onSubmit={handleRsvpSearch} className="flex flex-col xs:flex-row gap-2 flex-1 sm:max-w-sm">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                    <Input
+                      type="search"
+                      placeholder="Nome ou email..."
+                      value={rsvpSearchInput}
+                      onChange={(e) => setRsvpSearchInput(e.target.value)}
+                      className="pl-9 rounded-xl h-9 border-stone-200"
+                    />
+                  </div>
+                  <Button type="submit" variant="secondary" size="sm" className="rounded-xl shrink-0">
+                    Pesquisar
+                  </Button>
+                </form>
+                <select
+                  value={rsvpAttendance}
+                  onChange={(e) => {
+                    setRsvpAttendance(e.target.value as AttendanceFilter);
+                    setRsvpPage(1);
+                  }}
+                  className="h-9 rounded-xl border border-stone-200 bg-stone-50/80 px-3 text-sm text-stone-700 w-full sm:w-auto max-w-[180px]"
+                >
+                  <option value="">Todos</option>
+                  <option value="confirmed">Confirmados</option>
+                  <option value="declined">Recusados</option>
+                </select>
+              </div>
+              {rsvpLoading ? (
+                <div className="flex items-center justify-center py-12 gap-2">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <span className="text-sm text-stone-500">A carregar...</span>
+                </div>
+              ) : rsvps.length === 0 ? (
                 <div className="py-16 text-center">
                   <MessageCircle className="w-12 h-12 mx-auto text-stone-300 mb-3" />
                   <p className="text-stone-500 font-medium">Nenhuma resposta ainda.</p>
@@ -364,6 +448,35 @@ const Dashboard = () => {
                     </Table>
                   </div>
                 </>
+              )}
+              {!rsvpLoading && rsvps.length > 0 && rsvpTotalPages > 1 && (
+                <div className="flex items-center justify-between gap-4 px-4 sm:px-6 py-4 border-t border-stone-100">
+                  <p className="text-sm text-stone-500">
+                    Página {rsvpPage} de {rsvpTotalPages}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl"
+                      onClick={() => setRsvpPage((p) => Math.max(1, p - 1))}
+                      disabled={rsvpPage <= 1}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      <span className="sr-only sm:not-sr-only sm:ml-1">Anterior</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl"
+                      onClick={() => setRsvpPage((p) => Math.min(rsvpTotalPages, p + 1))}
+                      disabled={rsvpPage >= rsvpTotalPages}
+                    >
+                      <span className="sr-only sm:not-sr-only sm:mr-1">Seguinte</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
               )}
             </CardContent>
           </Card>

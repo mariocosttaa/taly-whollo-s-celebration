@@ -8,6 +8,7 @@ import {
   Menu,
   ExternalLink,
   Heart,
+  MessageCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -25,6 +26,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navItems = [
     { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
+    { label: "Respostas", icon: MessageCircle, href: "/admin/rsvp" },
     { label: "Acessos", icon: Eye, href: "/admin/visits" },
     { label: "Utilizadores", icon: Users, href: "/admin/users" },
   ];

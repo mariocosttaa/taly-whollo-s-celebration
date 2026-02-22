@@ -16,11 +16,16 @@ export class RsvpService {
     page: number = 1,
     limit: number = 10,
     search?: string,
+    attendance?: string,
   ) {
     const skip = (page - 1) * limit;
     const take = Math.min(Math.max(limit, 1), 100);
     const term = search?.trim();
-    const where = term
+    const statusFilter =
+      attendance === 'confirmed' || attendance === 'declined'
+        ? { attendance }
+        : undefined;
+    const searchClause = term
       ? {
           OR: [
             { name: { contains: term } },
@@ -29,6 +34,10 @@ export class RsvpService {
           ],
         }
       : undefined;
+    const where =
+      statusFilter && searchClause
+        ? { AND: [statusFilter, searchClause] }
+        : statusFilter || searchClause;
 
     const [data, total] = await Promise.all([
       this.prisma.rsvp.findMany({

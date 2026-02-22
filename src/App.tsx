@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./pages/Dashboard";
 import AdminVisits from "./pages/AdminVisits";
+import AdminRsvp from "./pages/AdminRsvp";
 import AdminUsers from "./pages/AdminUsers";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route element={<ProtectedRoute />}>
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/visits" element={<AdminVisits />} />
+            <Route path="/admin/rsvp" element={<AdminRsvp />} />
             <Route path="/admin/users" element={<AdminUsers />} />
           </Route>
 

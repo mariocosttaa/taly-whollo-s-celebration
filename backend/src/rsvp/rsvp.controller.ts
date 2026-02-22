@@ -18,8 +18,9 @@ export class RsvpController {
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
     @Query('search') search?: string,
+    @Query('attendance') attendance?: string,
   ) {
-    return this.rsvpService.findAll(+page, +limit, search);
+    return this.rsvpService.findAll(+page, +limit, search, attendance);
   }
 
   @UseGuards(JwtAuthGuard)
