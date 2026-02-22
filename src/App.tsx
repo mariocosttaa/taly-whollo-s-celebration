@@ -19,10 +19,10 @@ const VisitTracker = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Track visit on route change
-    // Only track the main page visit as requested
-    if (location.pathname === "/") {
-       api.post("/visits", { page: "home" }).catch(console.error);
+    // Só contar acessos ao site (nunca ao painel admin)
+    const isAdmin = location.pathname.startsWith("/admin");
+    if (!isAdmin && location.pathname === "/") {
+      api.post("/visits", { page: "home" }).catch(console.error);
     }
   }, [location]);
 

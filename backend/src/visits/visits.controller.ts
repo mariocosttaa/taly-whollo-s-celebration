@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards, Req } from '@nestjs/common';
 import { VisitsService } from './visits.service';
 import { CreateVisitDto } from './dto/create-visit.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -18,13 +18,23 @@ export class VisitsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.visitsService.findAll();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '20',
+    @Query('search') search?: string,
+  ) {
+    return this.visitsService.findAll(+page, +limit, search);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('stats')
   getStats() {
     return this.visitsService.getStats();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('stats/last7days')
+  getLast7Days() {
+    return this.visitsService.getLast7Days();
   }
 }
