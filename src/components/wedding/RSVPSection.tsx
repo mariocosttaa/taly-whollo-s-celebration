@@ -105,7 +105,7 @@ const RSVPSection = () => {
           <div className="w-24 h-1 bg-primary/20 mx-auto mb-8 rounded-full" />
           <p className="font-body text-stone-600 text-lg max-w-md mx-auto leading-relaxed">
             Por favor confirme a sua presença até{" "}
-            <strong className="text-primary">15 de Junho de 2026</strong>
+            <strong className="text-primary">11 de Junho de 2026</strong>
           </p>
         </motion.div>
 
