@@ -11,13 +11,25 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Search, ChevronLeft, ChevronRight, MessageCircle, Heart, MessageSquare } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquare,
+  Heart,
+  Plus,
+  Pencil,
+  Trash2,
+  X,
+} from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 
 const PAGE_SIZE = 20;
@@ -33,6 +45,25 @@ interface Rsvp {
   createdAt: string;
 }
 
+interface RsvpForm {
+  name: string;
+  email: string;
+  attendance: "confirmed" | "declined";
+  message: string;
+}
+
+const emptyForm: RsvpForm = { name: "", email: "", attendance: "confirmed", message: "" };
+
+const AttendanceBadge = ({ value }: { value: string }) => (
+  <span
+    className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${
+      value === "confirmed" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+    }`}
+  >
+    {value === "confirmed" ? "Confirmado" : "Recusado"}
+  </span>
+);
+
 const AdminRsvp = () => {
   const [rsvps, setRsvps] = useState<Rsvp[]>([]);
   const [total, setTotal] = useState(0);
@@ -41,23 +72,33 @@ const AdminRsvp = () => {
   const [search, setSearch] = useState("");
   const [attendance, setAttendance] = useState<AttendanceFilter>("");
   const [loading, setLoading] = useState(true);
+
+  // modals
   const [messageModal, setMessageModal] = useState<Rsvp | null>(null);
+  const [formModal, setFormModal] = useState<{ open: boolean; editing: Rsvp | null }>({
+    open: false,
+    editing: null,
+  });
+  const [deleteModal, setDeleteModal] = useState<Rsvp | null>(null);
+
+  // form state
+  const [form, setForm] = useState<RsvpForm>(emptyForm);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const fetchRsvps = useCallback(async () => {
     setLoading(true);
     try {
-      const params: Record<string, string | number> = {
-        page,
-        limit: PAGE_SIZE,
-      };
+      const params: Record<string, string | number> = { page, limit: PAGE_SIZE };
       if (search) params.search = search;
       if (attendance) params.attendance = attendance;
       const res = await api.get("/rsvp", { params });
       const data = res.data;
       setRsvps(data?.data ?? data ?? []);
       setTotal(data?.total ?? 0);
-    } catch (error) {
-      console.error("Error fetching RSVPs", error);
+    } catch {
+      // handled silently
     } finally {
       setLoading(false);
     }
@@ -73,30 +114,101 @@ const AdminRsvp = () => {
     setPage(1);
   };
 
+  const openCreate = () => {
+    setForm(emptyForm);
+    setFormError("");
+    setFormModal({ open: true, editing: null });
+  };
+
+  const openEdit = (rsvp: Rsvp) => {
+    setForm({
+      name: rsvp.name,
+      email: rsvp.email ?? "",
+      attendance: rsvp.attendance as "confirmed" | "declined",
+      message: rsvp.message ?? "",
+    });
+    setFormError("");
+    setFormModal({ open: true, editing: rsvp });
+  };
+
+  const closeForm = () => {
+    if (saving) return;
+    setFormModal({ open: false, editing: null });
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim()) { setFormError("O nome é obrigatório."); return; }
+    setSaving(true);
+    setFormError("");
+    try {
+      const payload = {
+        name: form.name.trim(),
+        email: form.email.trim() || null,
+        attendance: form.attendance,
+        message: form.message.trim() || null,
+      };
+      if (formModal.editing) {
+        await api.put(`/rsvp/${formModal.editing.id}`, payload);
+      } else {
+        await api.post("/rsvp", payload);
+      }
+      setFormModal({ open: false, editing: null });
+      fetchRsvps();
+    } catch {
+      setFormError("Ocorreu um erro. Tenta novamente.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteModal) return;
+    setDeleting(true);
+    try {
+      await api.delete(`/rsvp/${deleteModal.id}`);
+      setDeleteModal(null);
+      fetchRsvps();
+    } catch {
+      // silent
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <AdminLayout>
-      <div className="space-y-8">
-        <header>
-          <h1 className="font-heading text-2xl sm:text-3xl text-stone-800 tracking-tight">
-            Respostas RSVP
-          </h1>
-          <p className="text-stone-500 text-sm mt-1">
-            Ver e filtrar todas as confirmações de presença.
-          </p>
+      <div className="space-y-6">
+        <header className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="font-heading text-2xl sm:text-3xl text-stone-800 tracking-tight">
+              Respostas RSVP
+            </h1>
+            <p className="text-stone-500 text-sm mt-1">
+              Gerir todas as confirmações de presença.
+            </p>
+          </div>
+          <Button
+            onClick={openCreate}
+            className="shrink-0 rounded-xl min-h-[44px] touch-manipulation gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden xs:inline">Nova resposta</span>
+          </Button>
         </header>
 
         <Card className="border-stone-200/80 bg-white shadow-card">
-          <CardHeader>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <CardHeader className="pb-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-primary" />
+                <MessageSquare className="w-5 h-5 text-primary" />
                 <CardTitle className="text-lg font-semibold text-stone-800">
                   Lista de respostas
                 </CardTitle>
               </div>
-              <form onSubmit={handleSearch} className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
+              <form onSubmit={handleSearch} className="flex gap-2 w-full sm:w-auto">
                 <div className="relative flex-1 sm:min-w-[180px]">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
                   <Input
@@ -107,35 +219,26 @@ const AdminRsvp = () => {
                     className="pl-9 rounded-xl min-h-[44px] sm:min-h-0 bg-stone-50/80 border-stone-200 text-base sm:text-sm"
                   />
                 </div>
-                <div className="flex gap-2">
-                  <select
-                    value={attendance}
-                    onChange={(e) => {
-                      setAttendance(e.target.value as AttendanceFilter);
-                      setPage(1);
-                    }}
-                    className="min-h-[44px] sm:h-10 rounded-xl border border-stone-200 bg-stone-50/80 px-3 text-base sm:text-sm text-stone-700"
-                  >
-                    <option value="">Todos</option>
-                    <option value="confirmed">Confirmados</option>
-                    <option value="declined">Recusados</option>
-                  </select>
-                  <Button type="submit" variant="secondary" size="sm" className="rounded-xl min-h-[44px] sm:min-h-0 touch-manipulation">
-                    <Search className="w-4 h-4 sm:mr-1" />
-                    <span className="hidden sm:inline">Pesquisar</span>
-                  </Button>
-                </div>
+                <select
+                  value={attendance}
+                  onChange={(e) => { setAttendance(e.target.value as AttendanceFilter); setPage(1); }}
+                  className="min-h-[44px] sm:h-10 rounded-xl border border-stone-200 bg-stone-50/80 px-3 text-base sm:text-sm text-stone-700"
+                >
+                  <option value="">Todos</option>
+                  <option value="confirmed">Confirmados</option>
+                  <option value="declined">Recusados</option>
+                </select>
+                <Button type="submit" variant="secondary" size="sm" className="rounded-xl min-h-[44px] sm:min-h-0 px-3 touch-manipulation">
+                  <Search className="w-4 h-4" />
+                </Button>
               </form>
             </div>
             <p className="text-sm text-stone-500 mt-1">
               {total} {total === 1 ? "resposta" : "respostas"}
               {(search || attendance) && " (filtrado)"}
             </p>
-            <p className="text-sm sm:text-xs text-stone-500 mt-2 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" />
-              Clique numa mensagem para ver o texto completo.
-            </p>
           </CardHeader>
+
           <CardContent className="p-0 sm:px-6 sm:pb-6">
             {loading ? (
               <div className="flex items-center justify-center py-16 gap-3">
@@ -149,37 +252,54 @@ const AdminRsvp = () => {
               </div>
             ) : (
               <>
+                {/* Mobile cards */}
                 <div className="sm:hidden divide-y divide-stone-100">
                   {rsvps.map((rsvp) => (
-                    <div key={rsvp.id} className="p-5 space-y-2">
-                      <p className="font-medium text-stone-800 text-[1rem] leading-snug">{rsvp.name}</p>
-                      <p className="text-sm text-stone-500">
-                        {new Date(rsvp.createdAt).toLocaleDateString("pt-PT")} · {rsvp.email || "—"}
-                      </p>
-                      <span
-                        className={`inline-block px-2.5 py-1 rounded-full text-sm font-medium ${
-                          rsvp.attendance === "confirmed"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {rsvp.attendance === "confirmed" ? "Confirmado" : "Recusado"}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setMessageModal(rsvp)}
-                        className="min-h-[44px] w-full rounded-xl px-4 py-3 mt-2 text-left hover:bg-stone-100 active:bg-stone-200 flex items-center gap-2 border border-stone-100 text-stone-600 text-sm touch-manipulation"
-                      >
-                        <MessageSquare className="w-5 h-5 shrink-0 text-primary/70" />
-                        <span className="truncate flex-1">
-                          {rsvp.message ? rsvp.message : "(sem mensagem)"}
-                        </span>
-                        <span className="text-primary font-medium shrink-0">Ver</span>
-                      </button>
+                    <div key={rsvp.id} className="p-4 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="font-medium text-stone-800 truncate">{rsvp.name}</p>
+                          <p className="text-xs text-stone-400 mt-0.5">
+                            {new Date(rsvp.createdAt).toLocaleDateString("pt-PT")}
+                            {rsvp.email && ` · ${rsvp.email}`}
+                          </p>
+                        </div>
+                        <AttendanceBadge value={rsvp.attendance} />
+                      </div>
+                      {rsvp.message && (
+                        <button
+                          type="button"
+                          onClick={() => setMessageModal(rsvp)}
+                          className="w-full text-left rounded-lg px-3 py-2 bg-stone-50 border border-stone-100 text-xs text-stone-500 truncate touch-manipulation"
+                        >
+                          {rsvp.message}
+                        </button>
+                      )}
+                      <div className="flex gap-2 pt-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 rounded-xl min-h-[40px] gap-1.5 text-stone-700 touch-manipulation"
+                          onClick={() => openEdit(rsvp)}
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                          Editar
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 rounded-xl min-h-[40px] gap-1.5 text-red-600 border-red-200 hover:bg-red-50 touch-manipulation"
+                          onClick={() => setDeleteModal(rsvp)}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Eliminar
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
 
+                {/* Desktop table */}
                 <div className="hidden sm:block overflow-x-auto rounded-lg border border-stone-100">
                   <Table>
                     <TableHeader>
@@ -188,40 +308,56 @@ const AdminRsvp = () => {
                         <TableHead className="font-semibold text-stone-600">Nome</TableHead>
                         <TableHead className="font-semibold text-stone-600">Email</TableHead>
                         <TableHead className="font-semibold text-stone-600">Status</TableHead>
-                        <TableHead className="font-semibold text-stone-600 max-w-[200px]">Mensagem (clique para ver)</TableHead>
+                        <TableHead className="font-semibold text-stone-600">Mensagem</TableHead>
+                        <TableHead className="font-semibold text-stone-600 text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {rsvps.map((rsvp) => (
                         <TableRow key={rsvp.id} className="border-stone-100">
-                          <TableCell className="whitespace-nowrap text-stone-600">
+                          <TableCell className="whitespace-nowrap text-stone-600 text-sm">
                             {new Date(rsvp.createdAt).toLocaleDateString("pt-PT")}
                           </TableCell>
                           <TableCell className="font-medium text-stone-800">{rsvp.name}</TableCell>
-                          <TableCell className="text-stone-600">{rsvp.email || "—"}</TableCell>
+                          <TableCell className="text-stone-500 text-sm">{rsvp.email || "—"}</TableCell>
                           <TableCell>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                rsvp.attendance === "confirmed"
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-red-100 text-red-800"
-                              }`}
-                            >
-                              {rsvp.attendance === "confirmed" ? "Confirmado" : "Recusado"}
-                            </span>
+                            <AttendanceBadge value={rsvp.attendance} />
                           </TableCell>
-                          <TableCell className="max-w-[200px] p-0">
-                            <button
-                              type="button"
-                              onClick={() => setMessageModal(rsvp)}
-                              className="w-full text-left px-4 py-3 truncate block text-stone-500 hover:bg-stone-50 transition-colors rounded flex items-center gap-2 min-h-[52px]"
-                              title="Clique para ver a mensagem completa"
-                            >
-                              <MessageSquare className="w-4 h-4 shrink-0 text-primary/70" />
-                              <span className="truncate flex-1">
-                                {rsvp.message || "—"}
-                              </span>
-                            </button>
+                          <TableCell className="max-w-[180px]">
+                            {rsvp.message ? (
+                              <button
+                                type="button"
+                                onClick={() => setMessageModal(rsvp)}
+                                className="text-left truncate block w-full text-stone-500 text-sm hover:text-stone-800 transition-colors"
+                                title={rsvp.message}
+                              >
+                                {rsvp.message}
+                              </button>
+                            ) : (
+                              <span className="text-stone-300 text-sm">—</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 rounded-lg text-stone-500 hover:text-stone-800"
+                                onClick={() => openEdit(rsvp)}
+                                title="Editar"
+                              >
+                                <Pencil className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50"
+                                onClick={() => setDeleteModal(rsvp)}
+                                title="Eliminar"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -230,7 +366,7 @@ const AdminRsvp = () => {
                 </div>
 
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-between gap-4 px-4 sm:px-0 py-4 border-t border-stone-100 mt-4">
+                  <div className="flex items-center justify-between gap-4 px-4 sm:px-0 py-4 border-t border-stone-100 mt-2">
                     <p className="text-sm text-stone-500">
                       Página {page} de {totalPages}
                     </p>
@@ -263,12 +399,11 @@ const AdminRsvp = () => {
           </CardContent>
         </Card>
 
+        {/* Message modal */}
         <Dialog open={!!messageModal} onOpenChange={(open) => !open && setMessageModal(null)}>
-          <DialogContent className="rounded-2xl border-stone-200 max-w-[90vw] sm:max-w-md">
+          <DialogContent className="rounded-2xl border-stone-200 max-w-[92vw] sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="font-heading text-stone-800">
-                {messageModal?.name}
-              </DialogTitle>
+              <DialogTitle className="font-heading text-stone-800">{messageModal?.name}</DialogTitle>
               <p className="text-sm text-stone-500">
                 {messageModal && new Date(messageModal.createdAt).toLocaleDateString("pt-PT", { dateStyle: "long" })}
                 {messageModal?.email && ` · ${messageModal.email}`}
@@ -279,6 +414,128 @@ const AdminRsvp = () => {
                 {messageModal?.message || "(Sem mensagem)"}
               </p>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Create / Edit modal */}
+        <Dialog open={formModal.open} onOpenChange={(open) => !open && closeForm()}>
+          <DialogContent className="rounded-2xl border-stone-200 max-w-[92vw] sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="font-heading text-stone-800">
+                {formModal.editing ? "Editar resposta" : "Nova resposta"}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleFormSubmit} className="space-y-4 mt-1">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-stone-700">Nome *</label>
+                <Input
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder="Nome completo"
+                  className="rounded-xl min-h-[44px] border-stone-200"
+                  disabled={saving}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-stone-700">Email</label>
+                <Input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                  placeholder="email@exemplo.com"
+                  className="rounded-xl min-h-[44px] border-stone-200"
+                  disabled={saving}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-stone-700">Confirmação *</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {(["confirmed", "declined"] as const).map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      disabled={saving}
+                      onClick={() => setForm((f) => ({ ...f, attendance: val }))}
+                      className={`min-h-[44px] rounded-xl border-2 text-sm font-medium transition-colors touch-manipulation ${
+                        form.attendance === val
+                          ? val === "confirmed"
+                            ? "border-green-500 bg-green-50 text-green-800"
+                            : "border-red-400 bg-red-50 text-red-800"
+                          : "border-stone-200 text-stone-500 hover:border-stone-300"
+                      }`}
+                    >
+                      {val === "confirmed" ? "Confirmado" : "Recusado"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-stone-700">Mensagem</label>
+                <textarea
+                  value={form.message}
+                  onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                  placeholder="Mensagem opcional..."
+                  rows={3}
+                  disabled={saving}
+                  className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none disabled:opacity-50"
+                />
+              </div>
+              {formError && (
+                <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">{formError}</p>
+              )}
+              <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-xl min-h-[44px] touch-manipulation"
+                  onClick={closeForm}
+                  disabled={saving}
+                >
+                  <X className="w-4 h-4 mr-1.5" />
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  className="rounded-xl min-h-[44px] touch-manipulation"
+                  disabled={saving}
+                >
+                  {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                  {formModal.editing ? "Guardar alterações" : "Criar resposta"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete confirmation modal */}
+        <Dialog open={!!deleteModal} onOpenChange={(open) => !open && !deleting && setDeleteModal(null)}>
+          <DialogContent className="rounded-2xl border-stone-200 max-w-[92vw] sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="font-heading text-stone-800">Eliminar resposta</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-stone-600">
+              Tens a certeza que queres eliminar a resposta de{" "}
+              <strong className="text-stone-800">{deleteModal?.name}</strong>? Esta ação não pode ser desfeita.
+            </p>
+            <DialogFooter className="flex-col-reverse sm:flex-row gap-2 mt-2">
+              <Button
+                variant="outline"
+                className="rounded-xl min-h-[44px] touch-manipulation"
+                onClick={() => setDeleteModal(null)}
+                disabled={deleting}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                className="rounded-xl min-h-[44px] touch-manipulation"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                Eliminar
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

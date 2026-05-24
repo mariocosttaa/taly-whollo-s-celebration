@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRsvpDto } from './dto/create-rsvp.dto';
+import { UpdateRsvpDto } from './dto/update-rsvp.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -50,7 +51,7 @@ export class RsvpService {
     ]);
     return { data, total };
   }
-  
+
   async getStats() {
     const total = await this.prisma.rsvp.count();
     const confirmed = await this.prisma.rsvp.count({
@@ -60,5 +61,17 @@ export class RsvpService {
       where: { attendance: 'declined' },
     });
     return { total, confirmed, declined };
+  }
+
+  async update(id: number, updateRsvpDto: UpdateRsvpDto) {
+    const rsvp = await this.prisma.rsvp.findUnique({ where: { id } });
+    if (!rsvp) throw new NotFoundException(`RSVP #${id} not found`);
+    return this.prisma.rsvp.update({ where: { id }, data: updateRsvpDto });
+  }
+
+  async remove(id: number) {
+    const rsvp = await this.prisma.rsvp.findUnique({ where: { id } });
+    if (!rsvp) throw new NotFoundException(`RSVP #${id} not found`);
+    return this.prisma.rsvp.delete({ where: { id } });
   }
 }
